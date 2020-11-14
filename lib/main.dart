@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:math';
+import 'package:sensors/sensors.dart';
 
 void main() {
   return runApp(
@@ -34,36 +35,62 @@ class _DicePageState extends State<DicePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Row(
-        children: <Widget>[
-          Expanded(
-            child: FlatButton(
-              onPressed: () {
-                setState(() {
-                  leftdice = Random().nextInt(6) + 1;
-                  rightdice = Random().nextInt(6) + 1;
-                });
-              },
-              child: Image(
-                image: AssetImage('images/dice$leftdice.png'),
-              ),
+    void Rollme() {
+      setState(() {
+        rightdice = Random().nextInt(6) + 1;
+        leftdice = Random().nextInt(6) + 1;
+      });
+    }
+
+    return SafeArea(
+      child: Center(
+        child: Column(
+          children: [
+            Row(
+              children: <Widget>[
+                Expanded(
+                  child: FlatButton(
+                    onPressed: () {
+                      setState(() {
+                        Rollme();
+                      });
+                    },
+                    child: Image(
+                      image: AssetImage('images/dice$leftdice.png'),
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: FlatButton(
+                    onPressed: () {
+                      setState(() {
+                        Rollme();
+                      });
+                    },
+                    child: Image.asset(
+                      'images/dice$rightdice.png',
+                    ),
+                  ),
+                ),
+              ],
             ),
-          ),
-          Expanded(
-            child: FlatButton(
-              onPressed: () {
-                setState(() {
-                  rightdice = Random().nextInt(6) + 1;
-                  leftdice = Random().nextInt(6) + 1;
-                });
-              },
-              child: Image.asset(
-                'images/dice$rightdice.png',
-              ),
-            ),
-          ),
-        ],
+            RaisedButton(
+                color: Colors.white,
+                child: Text(
+                  'Roll',
+                  style: TextStyle(fontSize: 20),
+                ),
+                onPressed: () {
+                  gyroscopeEvents.listen((GyroscopeEvent event) {
+                    if (event.y > 1) {
+                      setState(() {
+                        Rollme();
+                      });
+                    }
+                  });
+                }),
+          ],
+        ),
       ),
     );
   }
